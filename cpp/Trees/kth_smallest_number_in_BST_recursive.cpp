@@ -1,4 +1,3 @@
-#include <vector>
 #include "ds/TreeNode.h"
 using ds::TreeNode;
 
@@ -12,19 +11,22 @@ using ds::TreeNode;
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+void kthSmallest(TreeNode* node, int& k, int& smallest) {
+    if (!node) return;
 
-int kthSmallestNumberInBSTRecursive(TreeNode* root, int k) {
-    std::vector<int> sortedList = inorder(root);
-    return sortedList[k - 1];
+    kthSmallest(node->left, k, smallest);
+
+    if (k == 0) return; // short-circuit: answer found in left subtree
+    if (--k == 0) {
+        smallest = node->val;
+        return;
+    }
+
+    kthSmallest(node->right, k, smallest);
 }
 
-// Inorder traversal function to attain a sorted list of nodes from the BST.
-std::vector<int> inorder(TreeNode* node) {
-    if (!node)
-        return {};
-    std::vector<int> left = inorder(node->left);
-    left.push_back(node->val);
-    std::vector<int> right = inorder(node->right);
-    left.insert(left.end(), right.begin(), right.end());
-    return left;
+int kthSmallestNumberInBSTRecursive(TreeNode* root, int k) {
+    int smallest = root->val;
+    kthSmallest(root, k, smallest);
+    return smallest;
 }
